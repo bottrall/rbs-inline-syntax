@@ -1,0 +1,84 @@
+{
+  "scopeName": "rbs-inline.injection",
+  "injectionSelector": "L:source.ruby -string -comment",
+  "patterns": [
+    { "include": "#rbs-annotation" },
+    { "include": "#dynamic-annotation" }
+  ],
+  "repository": {
+    "rbs-annotation": {
+      "begin": "(^[ \\t]+)?(#)\\s*(@rbs)(?![\\w-])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.whitespace.comment.leading.ruby" },
+        "2": { "name": "comment.line.number-sign.ruby punctuation.definition.comment.ruby" },
+        "3": { "name": "storage.type.annotation.rbs" }
+      },
+      "end": "$",
+      "name": "meta.annotation.rbs-inline",
+      "patterns": [
+        { "include": "#directive" },
+        { "include": "#return" },
+        { "include": "#parameter" },
+        { "include": "#description" },
+        { "include": "#type" }
+      ]
+    },
+    "dynamic-annotation": {
+      "begin": "(^[ \\t]+)?(#)\\s*(@dynamic)(?![\\w-])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.whitespace.comment.leading.ruby" },
+        "2": { "name": "comment.line.number-sign.ruby punctuation.definition.comment.ruby" },
+        "3": { "name": "storage.type.annotation.rbs" }
+      },
+      "end": "$",
+      "name": "meta.annotation.rbs-inline",
+      "patterns": [
+        { "match": "\\b[A-Za-z_]\\w*[?!=]?", "name": "entity.name.function.rbs" },
+        { "match": ",", "name": "punctuation.separator.rbs" }
+      ]
+    },
+    "directive": {
+      "match": "\\G\\s+(module-self|generic|inherits|override|skip|use|module-decl|class-alias|module-alias)(?![\\w-])",
+      "captures": {
+        "1": { "name": "keyword.other.directive.rbs" }
+      }
+    },
+    "return": {
+      "match": "\\G\\s+(return)(:)",
+      "captures": {
+        "1": { "name": "keyword.other.return.rbs" },
+        "2": { "name": "punctuation.separator.key-value.rbs" }
+      }
+    },
+    "parameter": {
+      "match": "\\G\\s+(?:((?:self\\.)?@\\w+)|(\\*{1,2}\\w*|&\\??\\w*|\\??\\w+))(:)",
+      "captures": {
+        "1": { "name": "variable.other.readwrite.instance.rbs" },
+        "2": { "name": "variable.parameter.function.rbs" },
+        "3": { "name": "punctuation.separator.key-value.rbs" }
+      }
+    },
+    "description": {
+      "match": "\\s(--\\s.*)$",
+      "captures": {
+        "1": { "name": "comment.line.description.rbs" }
+      }
+    },
+    "type": {
+      "patterns": [
+        { "match": "\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*'", "name": "string.quoted.rbs" },
+        { "match": "(?<![\\w:]):[A-Za-z_]\\w*[?!=]?", "name": "constant.other.symbol.rbs" },
+        { "match": "\\b\\d+\\b", "name": "constant.numeric.rbs" },
+        { "match": "\\b(unchecked|in|out)\\b(?=\\s+[A-Z])", "name": "storage.modifier.variance.rbs" },
+        { "match": "\\b(void|nil|untyped|top|bot|self|instance|class|interface|singleton|bool|boolish|any)\\b", "name": "support.type.builtin.rbs" },
+        { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "variable.other.constant.rbs" },
+        { "match": "[\\[\\]]", "name": "punctuation.section.type_parameters.rbs" },
+        { "match": "\\b[a-z][A-Za-z0-9_]*(?=:)", "name": "constant.other.symbol.hashkey.parameter.function.rbs" },
+        { "match": "\\b_[A-Z][A-Za-z0-9_]*\\b", "name": "variable.other.constant.rbs" },
+        { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.parameter.function.rbs" },
+        { "match": "->", "name": "punctuation.section.signature.return.rbs" },
+        { "match": "[\\(\\)\\{\\},\\|\\*&:?\\^<]", "name": "punctuation.section.signature.rbs" }
+      ]
+    }
+  }
+}

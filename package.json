@@ -1,0 +1,32 @@
+{
+  "name": "rbs-inline-syntax",
+  "displayName": "rbs-inline Syntax",
+  "description": "Highlights rbs-inline `# @rbs` and `# @dynamic` annotations in Ruby comments.",
+  "version": "0.1.0",
+  "publisher": "jakebottrall",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "grammars": [
+      {
+        "path": "./syntaxes/rbs-inline.injection.json",
+        "scopeName": "rbs-inline.injection",
+        "injectTo": [
+          "source.ruby"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test 'test/**/*.test.mjs'"
+  },
+  "devDependencies": {
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
+  }
+}
