@@ -28,5 +28,9 @@
   "devDependencies": {
     "vscode-oniguruma": "^2.0.1",
     "vscode-textmate": "^9.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bottrall/rbs-inline-syntax.git"
   }
 }
