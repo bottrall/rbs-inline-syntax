@@ -2,3 +2,6 @@ test/**
 node_modules/**
 .gitignore
 package-lock.json
+.github/**
+release-please-config.json
+.release-please-manifest.json
