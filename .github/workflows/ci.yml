@@ -12,11 +12,12 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       # The grammar tests run against Ruby LSP's Ruby grammar, which locally
       # comes from the installed extension. CI has no VS Code, so fetch the
       # latest Ruby LSP from Open VSX and point the tests at its grammars.
@@ -27,4 +28,4 @@ jobs:
           curl -fsSL -o "$dir.vsix" "$url"
           unzip -q -j "$dir.vsix" 'extension/grammars/*' -d "$dir"
           echo "RUBY_LSP_GRAMMARS=$dir" >> "$GITHUB_ENV"
-      - run: npm test
+      - run: pnpm test

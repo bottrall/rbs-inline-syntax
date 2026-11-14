@@ -32,6 +32,6 @@ code --install-extension rbs-inline-syntax-*.vsix
 ## Test
 
 ```sh
-npm install
-npm test
+pnpm install
+pnpm test
 ```

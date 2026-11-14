@@ -27,8 +27,8 @@ jobs:
   # The Marketplace trusts this workflow via OIDC trusted publishing, pinned
   # to this file name and the `release` environment; change either and
   # publishing stops. Tests run in ci.yml, so this job only packages and
-  # publishes. The extension has no runtime dependencies, so it skips `npm ci`
-  # and packages with --no-dependencies.
+  # publishes. The extension has no runtime dependencies, so it skips
+  # `pnpm install` and packages with --no-dependencies.
   publish:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
@@ -43,12 +43,13 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
-      - run: npx --yes @vscode/vsce@4 package --no-dependencies --out "rbs-inline-syntax-${TAG#v}.vsix"
+          node-version-file: .nvmrc
+      - run: pnpm dlx @vscode/vsce@4 package --no-dependencies --out "rbs-inline-syntax-${TAG#v}.vsix"
       - name: Publish to VS Code Marketplace
-        run: npx --yes @vscode/vsce@4 publish --oidc --packagePath rbs-inline-syntax-*.vsix
+        run: pnpm dlx @vscode/vsce@4 publish --oidc --packagePath rbs-inline-syntax-*.vsix
       - name: Attach to GitHub release
         run: gh release upload "$TAG" rbs-inline-syntax-*.vsix --repo "$GITHUB_REPOSITORY"
         env:
