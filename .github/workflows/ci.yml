@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # The grammar tests run against Ruby LSP's Ruby grammar, which locally
+      # comes from the installed extension. CI has no VS Code, so fetch the
+      # latest Ruby LSP from Open VSX and point the tests at its grammars.
+      - name: Fetch Ruby LSP grammars
+        run: |
+          dir="$RUNNER_TEMP/ruby-lsp"
+          url="$(curl -fsSL https://open-vsx.org/api/Shopify/ruby-lsp/latest | jq -r '.files.download')"
+          curl -fsSL -o "$dir.vsix" "$url"
+          unzip -q -j "$dir.vsix" 'extension/grammars/*' -d "$dir"
+          echo "RUBY_LSP_GRAMMARS=$dir" >> "$GITHUB_ENV"
+      - run: npm test

@@ -11,7 +11,8 @@ const require = createRequire(import.meta.url);
 
 // The Ruby grammar comes from the installed Ruby LSP extension, so the tests
 // exercise the same base grammar (and its `#:` injection) VS Code will use.
-const rubyLspDir = () => {
+// RUBY_LSP_GRAMMARS points at a grammars directory instead, for CI.
+const installedRubyLspDir = () => {
   const root = join(homedir(), ".vscode", "extensions");
   const latest = readdirSync(root)
     .filter((name) => name.startsWith("shopify.ruby-lsp-"))
@@ -20,6 +21,8 @@ const rubyLspDir = () => {
   if (!latest) throw new Error("Shopify.ruby-lsp is not installed");
   return join(root, latest, "grammars");
 };
+
+const rubyLspDir = () => process.env.RUBY_LSP_GRAMMARS || installedRubyLspDir();
 
 const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 
