@@ -24,7 +24,7 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
 
-  # The publish job holds the marketplace tokens, so it installs none of the
+  # The publish job can mint marketplace tokens, so it installs none of the
   # dev dependencies: tests and packaging run here, unprivileged, and publish
   # only uploads the .vsix built by this job.
   verify:
@@ -43,12 +43,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npx --yes @vscode/vsce@3 package --out rbs-inline-syntax.vsix
+      - run: npx --yes @vscode/vsce@4 package --out rbs-inline-syntax.vsix
       - uses: actions/upload-artifact@v7
         with:
           name: vsix
           path: rbs-inline-syntax.vsix
 
+  # The Marketplace trusts this workflow via OIDC trusted publishing, pinned
+  # to this file name and the `release` environment; change either and
+  # publishing stops.
   publish:
     needs: [release-please, verify]
     if: needs.release-please.outputs.release_created == 'true'
@@ -56,6 +59,7 @@ jobs:
     environment: release
     permissions:
       contents: write
+      id-token: write
     env:
       TAG: ${{ needs.release-please.outputs.tag_name }}
     steps:
@@ -67,13 +71,7 @@ jobs:
           name: vsix
       - run: mv rbs-inline-syntax.vsix "rbs-inline-syntax-${TAG#v}.vsix"
       - name: Publish to VS Code Marketplace
-        run: npx --yes @vscode/vsce@3 publish --packagePath rbs-inline-syntax-*.vsix
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      - name: Publish to Open VSX
-        run: npx --yes ovsx publish rbs-inline-syntax-*.vsix
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: npx --yes @vscode/vsce@4 publish --oidc --packagePath rbs-inline-syntax-*.vsix
       - name: Attach to GitHub release
         run: gh release upload "$TAG" rbs-inline-syntax-*.vsix --repo "$GITHUB_REPOSITORY"
         env:
