@@ -166,6 +166,9 @@ importers:
 
   .:
     devDependencies:
+      '@bottrall/oxlint-config':
+        specifier: ^0.1.0
+        version: 0.1.0(oxfmt@0.78.0)(oxlint@1.93.0)
       '@vitest/coverage-v8':
         specifier: ^5.1.0
         version: 5.1.0(vitest@5.1.0)
@@ -207,6 +210,22 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@bottrall/oxlint-config@0.1.0':
+    resolution: {integrity: sha512-ZZuyuVVuW/zgn/Lekgx51Spd9aftMMckXJNhJx7LiULPVb+8/j47RdYZR4Dn0Uis90fXxP3W41+hi9nK1rJRqg==}
+    peerDependencies:
+      eslint-plugin-better-tailwindcss: ^4.11.0
+      eslint-plugin-jest-dom: ^5.10.2
+      eslint-plugin-testing-library: ^7.16.2
+      oxfmt: ~0.78.0
+      oxlint: ^1.93.0
+    peerDependenciesMeta:
+      eslint-plugin-better-tailwindcss:
+        optional: true
+      eslint-plugin-jest-dom:
+        optional: true
+      eslint-plugin-testing-library:
+        optional: true
 
   '@emnapi/core@2.0.0-beta.2':
     resolution: {integrity: sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==}
@@ -945,6 +964,11 @@ snapshots:
       '@babel/helper-validator-identifier': 7.29.7
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@bottrall/oxlint-config@0.1.0(oxfmt@0.78.0)(oxlint@1.93.0)':
+    dependencies:
+      oxfmt: 0.78.0
+      oxlint: 1.93.0
 
   '@emnapi/core@2.0.0-beta.2':
     dependencies:
