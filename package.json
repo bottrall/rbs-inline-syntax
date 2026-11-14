@@ -5,6 +5,7 @@
   "version": "0.1.1",
   "publisher": "bottrall",
   "license": "MIT",
+  "type": "module",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -23,7 +24,7 @@
     ]
   },
   "scripts": {
-    "test": "node --test 'test/**/*.test.mjs'"
+    "test": "node --test 'test/**/*.test.js'"
   },
   "devDependencies": {
     "vscode-oniguruma": "^2.0.1",
