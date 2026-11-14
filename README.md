@@ -29,9 +29,13 @@ gh release download --repo bottrall/rbs-inline-syntax --pattern '*.vsix' --clobb
 code --install-extension rbs-inline-syntax-*.vsix
 ```
 
-## Test
+## Development
 
 ```sh
-pnpm install
-pnpm test
+bin/setup   # install dependencies
+bin/test    # run the grammar tests
+bin/lint    # lint and check formatting (--fix to fix what it can)
+bin/ci      # run exactly what CI runs
 ```
+
+The tests run against the Ruby LSP extension's grammars: the installed `Shopify.ruby-lsp` extension's, or those in the directory `RUBY_LSP_GRAMMARS` names.

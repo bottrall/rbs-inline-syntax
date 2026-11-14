@@ -1,10 +1,9 @@
-import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { describe, it } from "node:test";
 
+import { describe, expect, it } from "vitest";
 import oniguruma from "vscode-oniguruma";
 import textmate from "vscode-textmate";
 
@@ -78,24 +77,25 @@ function tokenize(source) {
 
 function scopesOf(source, text) {
   const token = tokenize(source).find((candidate) => candidate.text === text);
-  assert.ok(token, `no token ${JSON.stringify(text)} in ${JSON.stringify(source)}`);
+  expect(token, `no token ${JSON.stringify(text)} in ${JSON.stringify(source)}`).toBeDefined();
   return token.scopes;
 }
 
 function assertScope(source, text, scope) {
-  assert.ok(
-    scopesOf(source, text).includes(scope),
-    `${JSON.stringify(text)} lacks ${scope}: ${scopesOf(source, text).join(" ")}`,
-  );
+  const scopes = scopesOf(source, text);
+  expect(scopes, `${JSON.stringify(text)} lacks ${scope}: ${scopes.join(" ")}`).toContain(scope);
 }
 
 function refuteScope(source, text, scope) {
-  assert.ok(!scopesOf(source, text).includes(scope), `${JSON.stringify(text)} has ${scope}`);
+  expect(scopesOf(source, text), `${JSON.stringify(text)} has ${scope}`).not.toContain(scope);
 }
 
 function refuteScopeAnywhere(source, scope) {
   const token = tokenize(source).find((candidate) => candidate.scopes.includes(scope));
-  assert.ok(!token, `${JSON.stringify(token?.text)} has ${scope} in ${JSON.stringify(source)}`);
+  expect(
+    token,
+    `${JSON.stringify(token?.text)} has ${scope} in ${JSON.stringify(source)}`,
+  ).toBeUndefined();
 }
 
 describe("@rbs annotations", () => {
