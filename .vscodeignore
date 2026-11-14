@@ -2,6 +2,7 @@ test/**
 node_modules/**
 .gitignore
 pnpm-lock.yaml
+pnpm-workspace.yaml
 .nvmrc
 .github/**
 release-please-config.json
