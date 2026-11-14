@@ -32,5 +32,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bottrall/rbs-inline-syntax.git"
-  }
+  },
+  "packageManager": "pnpm@12.18.0"
 }

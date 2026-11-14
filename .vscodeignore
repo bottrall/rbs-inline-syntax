@@ -1,7 +1,8 @@
 test/**
 node_modules/**
 .gitignore
-package-lock.json
+pnpm-lock.yaml
+.nvmrc
 .github/**
 release-please-config.json
 .release-please-manifest.json
