@@ -6,3 +6,4 @@ pnpm-lock.yaml
 .github/**
 release-please-config.json
 .release-please-manifest.json
+renovate.json
