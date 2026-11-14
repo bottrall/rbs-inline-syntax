@@ -16,21 +16,18 @@ The type tokens use the same scopes as the Ruby LSP extension's `#:` signature h
 
 ## Install
 
-Grab the `.vsix` from the latest release:
+Install **rbs-inline Syntax** from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=bottrall.rbs-inline-syntax), either from the Extensions view or with:
+
+```sh
+code --install-extension bottrall.rbs-inline-syntax
+```
+
+Each [GitHub release](https://github.com/bottrall/rbs-inline-syntax/releases) also has the `.vsix` attached, for installing by hand:
 
 ```sh
 gh release download --repo bottrall/rbs-inline-syntax --pattern '*.vsix' --clobber
 code --install-extension rbs-inline-syntax-*.vsix
 ```
-
-Or build it from a checkout:
-
-```sh
-npx @vscode/vsce package
-code --install-extension rbs-inline-syntax-0.1.0.vsix
-```
-
-Then run **Developer: Reload Window**.
 
 ## Test
 
