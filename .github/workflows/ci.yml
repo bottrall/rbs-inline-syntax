@@ -4,10 +4,21 @@ on:
   - pull_request
 
 jobs:
-  test:
+  check:
+    name: ${{ matrix.check.name }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - name: oxlint
+            run: pnpm run lint
+          - name: oxfmt
+            run: pnpm run format
+          - name: test
+            run: pnpm test
     steps:
       - uses: actions/checkout@v7
         with:
@@ -18,16 +29,15 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run lint
-      - run: pnpm run format
       # The grammar tests run against Ruby LSP's Ruby grammar, which locally
       # comes from the installed extension. CI has no VS Code, so fetch the
       # latest Ruby LSP from Open VSX and point the tests at its grammars.
       - name: Fetch Ruby LSP grammars
+        if: matrix.check.name == 'test'
         run: |
           dir="$RUNNER_TEMP/ruby-lsp"
           url="$(curl -fsSL https://open-vsx.org/api/Shopify/ruby-lsp/latest | jq -r '.files.download')"
           curl -fsSL -o "$dir.vsix" "$url"
           unzip -q -j "$dir.vsix" 'extension/grammars/*' -d "$dir"
           echo "RUBY_LSP_GRAMMARS=$dir" >> "$GITHUB_ENV"
-      - run: pnpm test
+      - run: ${{ matrix.check.run }}
