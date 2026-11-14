@@ -9,3 +9,8 @@ release-please-config.json
 renovate.json
 .oxlintrc.json
 .oxfmtrc.json
+bin/**
+.shellcheckrc
+vitest.config.js
+AGENTS.md
+coverage/**

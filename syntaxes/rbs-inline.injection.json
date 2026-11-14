@@ -1,10 +1,7 @@
 {
   "scopeName": "rbs-inline.injection",
   "injectionSelector": "L:source.ruby -string -comment",
-  "patterns": [
-    { "include": "#rbs-annotation" },
-    { "include": "#dynamic-annotation" }
-  ],
+  "patterns": [{ "include": "#rbs-annotation" }, { "include": "#dynamic-annotation" }],
   "repository": {
     "rbs-annotation": {
       "begin": "(^[ \\t]+)?(#)\\s*(@rbs)(?![\\w-])",
@@ -69,11 +66,20 @@
         { "match": "\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*'", "name": "string.quoted.rbs" },
         { "match": "(?<![\\w:]):[A-Za-z_]\\w*[?!=]?", "name": "constant.other.symbol.rbs" },
         { "match": "\\b\\d+\\b", "name": "constant.numeric.rbs" },
-        { "match": "\\b(unchecked|in|out)\\b(?=\\s+[A-Z])", "name": "storage.modifier.variance.rbs" },
-        { "match": "\\b(void|nil|untyped|top|bot|self|instance|class|interface|singleton|bool|boolish|any)\\b", "name": "support.type.builtin.rbs" },
+        {
+          "match": "\\b(unchecked|in|out)\\b(?=\\s+[A-Z])",
+          "name": "storage.modifier.variance.rbs"
+        },
+        {
+          "match": "\\b(void|nil|untyped|top|bot|self|instance|class|interface|singleton|bool|boolish|any)\\b",
+          "name": "support.type.builtin.rbs"
+        },
         { "match": "\\b[A-Z][A-Za-z0-9_]*\\b", "name": "variable.other.constant.rbs" },
         { "match": "[\\[\\]]", "name": "punctuation.section.type_parameters.rbs" },
-        { "match": "\\b[a-z][A-Za-z0-9_]*(?=:)", "name": "constant.other.symbol.hashkey.parameter.function.rbs" },
+        {
+          "match": "\\b[a-z][A-Za-z0-9_]*(?=:)",
+          "name": "constant.other.symbol.hashkey.parameter.function.rbs"
+        },
         { "match": "\\b_[A-Z][A-Za-z0-9_]*\\b", "name": "variable.other.constant.rbs" },
         { "match": "\\b[a-z][A-Za-z0-9_]*\\b", "name": "variable.parameter.function.rbs" },
         { "match": "->", "name": "punctuation.section.signature.return.rbs" },

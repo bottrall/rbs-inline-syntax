@@ -1,17 +1,26 @@
 {
   "name": "rbs-inline-syntax",
   "displayName": "rbs-inline Syntax",
-  "description": "Highlights rbs-inline `# @rbs` and `# @dynamic` annotations in Ruby comments.",
   "version": "0.1.2",
-  "publisher": "bottrall",
-  "license": "MIT",
-  "type": "module",
-  "engines": {
-    "vscode": "^1.80.0"
-  },
+  "description": "Highlights rbs-inline `# @rbs` and `# @dynamic` annotations in Ruby comments.",
   "categories": [
     "Programming Languages"
   ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bottrall/rbs-inline-syntax.git"
+  },
+  "publisher": "bottrall",
+  "type": "module",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.1.0",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "vitest": "^5.1.0",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
+  },
   "contributes": {
     "grammars": [
       {
@@ -23,22 +32,8 @@
       }
     ]
   },
-  "scripts": {
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "format": "oxfmt --check test",
-    "format:fix": "oxfmt --write test",
-    "test": "node --test 'test/**/*.test.js'"
-  },
-  "devDependencies": {
-    "oxfmt": "^0.78.0",
-    "oxlint": "^1.93.0",
-    "vscode-oniguruma": "^2.0.1",
-    "vscode-textmate": "^9.3.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bottrall/rbs-inline-syntax.git"
+  "engines": {
+    "vscode": "^1.80.0"
   },
   "packageManager": "pnpm@12.18.0"
 }

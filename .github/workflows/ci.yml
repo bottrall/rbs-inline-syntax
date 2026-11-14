@@ -3,22 +3,25 @@ name: ci
 on:
   - pull_request
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   check:
     name: ${{ matrix.check.name }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     strategy:
       fail-fast: false
       matrix:
         check:
-          - name: oxlint
-            run: pnpm run lint
-          - name: oxfmt
-            run: pnpm run format
+          - name: lint
+            run: bin/lint
           - name: test
-            run: pnpm test
+            run: bin/test
     steps:
       - uses: actions/checkout@v7
         with:
@@ -28,7 +31,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: bin/setup --frozen-lockfile
       # The grammar tests run against Ruby LSP's Ruby grammar, which locally
       # comes from the installed extension. CI has no VS Code, so fetch the
       # latest Ruby LSP from Open VSX and point the tests at its grammars.
