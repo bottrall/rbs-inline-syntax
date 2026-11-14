@@ -2,7 +2,7 @@
   "name": "rbs-inline-syntax",
   "displayName": "rbs-inline Syntax",
   "description": "Highlights rbs-inline `# @rbs` and `# @dynamic` annotations in Ruby comments.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "bottrall",
   "license": "MIT",
   "engines": {
