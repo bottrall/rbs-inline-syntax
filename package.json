@@ -24,9 +24,15 @@
     ]
   },
   "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check test",
+    "format:fix": "oxfmt --write test",
     "test": "node --test 'test/**/*.test.js'"
   },
   "devDependencies": {
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
     "vscode-oniguruma": "^2.0.1",
     "vscode-textmate": "^9.3.2"
   },

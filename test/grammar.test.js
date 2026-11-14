@@ -1,91 +1,102 @@
-import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import textmate from "vscode-textmate";
+import { describe, it } from "node:test";
+
 import oniguruma from "vscode-oniguruma";
+import textmate from "vscode-textmate";
 
 const require = createRequire(import.meta.url);
 
-// The Ruby grammar comes from the installed Ruby LSP extension, so the tests
-// exercise the same base grammar (and its `#:` injection) VS Code will use.
-// RUBY_LSP_GRAMMARS points at a grammars directory instead, for CI.
-const installedRubyLspDir = () => {
+/**
+ * The installed Ruby LSP extension's grammars, so the tests exercise the same
+ * base grammar (and its `#:` injection) VS Code will use.
+ */
+function installedRubyLspDir() {
   const root = join(homedir(), ".vscode", "extensions");
   const latest = readdirSync(root)
     .filter((name) => name.startsWith("shopify.ruby-lsp-"))
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .toSorted((left, right) => left.localeCompare(right, undefined, { numeric: true }))
     .at(-1);
-  if (!latest) throw new Error("Shopify.ruby-lsp is not installed");
+  if (!latest) {
+    throw new Error("Shopify.ruby-lsp is not installed");
+  }
   return join(root, latest, "grammars");
-};
+}
 
-const rubyLspDir = () => process.env.RUBY_LSP_GRAMMARS || installedRubyLspDir();
+/** RUBY_LSP_GRAMMARS points at a grammars directory instead, for CI. */
+function rubyLspDir() {
+  return process.env.RUBY_LSP_GRAMMARS || installedRubyLspDir();
+}
 
-const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
+function readJson(path) {
+  return JSON.parse(readFileSync(path, "utf8"));
+}
 
-const grammarFiles = () => ({
-  "source.ruby": join(rubyLspDir(), "ruby.cson.json"),
-  "rbs-comment.injection": join(rubyLspDir(), "rbs.injection.json"),
-  "rbs-inline.injection": new URL("../syntaxes/rbs-inline.injection.json", import.meta.url),
-});
+function grammarFiles() {
+  return {
+    "source.ruby": join(rubyLspDir(), "ruby.cson.json"),
+    "rbs-comment.injection": join(rubyLspDir(), "rbs.injection.json"),
+    "rbs-inline.injection": new URL("../syntaxes/rbs-inline.injection.json", import.meta.url),
+  };
+}
 
-const loadRuby = async () => {
+async function loadRuby() {
   const wasm = readFileSync(require.resolve("vscode-oniguruma/release/onig.wasm")).buffer;
   await oniguruma.loadWASM(wasm);
   const files = grammarFiles();
   const registry = new textmate.Registry({
     onigLib: Promise.resolve({
       createOnigScanner: (patterns) => new oniguruma.OnigScanner(patterns),
-      createOnigString: (s) => new oniguruma.OnigString(s),
+      createOnigString: (string) => new oniguruma.OnigString(string),
     }),
-    loadGrammar: async (scopeName) => (files[scopeName] ? readJson(files[scopeName]) : null),
+    loadGrammar: (scopeName) =>
+      Promise.resolve(files[scopeName] ? readJson(files[scopeName]) : null),
     getInjections: (scopeName) =>
       scopeName === "source.ruby" ? ["rbs-comment.injection", "rbs-inline.injection"] : [],
   });
   return registry.loadGrammar("source.ruby");
-};
+}
 
-let ruby;
+const ruby = await loadRuby();
 
-const tokenize = (source) =>
-  source.split("\n").reduce(
+function tokenize(source) {
+  return source.split("\n").reduce(
     ({ tokens, stack }, line) => {
       const result = ruby.tokenizeLine(line, stack);
-      const lineTokens = result.tokens.map((t) => ({
-        text: line.slice(t.startIndex, t.endIndex),
-        scopes: t.scopes,
+      const lineTokens = result.tokens.map((token) => ({
+        text: line.slice(token.startIndex, token.endIndex),
+        scopes: token.scopes,
       }));
       return { tokens: [...tokens, ...lineTokens], stack: result.ruleStack };
     },
     { tokens: [], stack: textmate.INITIAL },
   ).tokens;
+}
 
-const scopesOf = (source, text) => {
-  const token = tokenize(source).find((t) => t.text === text);
+function scopesOf(source, text) {
+  const token = tokenize(source).find((candidate) => candidate.text === text);
   assert.ok(token, `no token ${JSON.stringify(text)} in ${JSON.stringify(source)}`);
   return token.scopes;
-};
+}
 
-const assertScope = (source, text, scope) =>
+function assertScope(source, text, scope) {
   assert.ok(
     scopesOf(source, text).includes(scope),
     `${JSON.stringify(text)} lacks ${scope}: ${scopesOf(source, text).join(" ")}`,
   );
+}
 
-const refuteScope = (source, text, scope) =>
+function refuteScope(source, text, scope) {
   assert.ok(!scopesOf(source, text).includes(scope), `${JSON.stringify(text)} has ${scope}`);
+}
 
-const refuteScopeAnywhere = (source, scope) => {
-  const token = tokenize(source).find((t) => t.scopes.includes(scope));
+function refuteScopeAnywhere(source, scope) {
+  const token = tokenize(source).find((candidate) => candidate.scopes.includes(scope));
   assert.ok(!token, `${JSON.stringify(token?.text)} has ${scope} in ${JSON.stringify(source)}`);
-};
-
-before(async () => {
-  ruby = await loadRuby();
-});
+}
 
 describe("@rbs annotations", () => {
   it("scopes the @rbs keyword", () => {
@@ -115,7 +126,11 @@ describe("@rbs annotations", () => {
 
 describe("@rbs directives", () => {
   it("scopes module-self", () => {
-    assertScope("# @rbs module-self Riffer::Rig::Runtime", "module-self", "keyword.other.directive.rbs");
+    assertScope(
+      "# @rbs module-self Riffer::Rig::Runtime",
+      "module-self",
+      "keyword.other.directive.rbs",
+    );
   });
 
   it("scopes generic", () => {
@@ -167,13 +182,21 @@ describe("@rbs parameters", () => {
   });
 
   it("scopes a class-level instance variable", () => {
-    assertScope("# @rbs self.@extensions: Hash[String, Integer]", "self.@extensions", "variable.other.readwrite.instance.rbs");
+    assertScope(
+      "# @rbs self.@extensions: Hash[String, Integer]",
+      "self.@extensions",
+      "variable.other.readwrite.instance.rbs",
+    );
   });
 });
 
 describe("@rbs descriptions", () => {
   it("scopes text after -- as a description", () => {
-    assertScope("# @rbs name: String -- the display name", "-- the display name", "comment.line.description.rbs");
+    assertScope(
+      "# @rbs name: String -- the display name",
+      "-- the display name",
+      "comment.line.description.rbs",
+    );
   });
 });
 
@@ -195,7 +218,11 @@ describe("@rbs types", () => {
   });
 
   it("scopes a proc arrow", () => {
-    assertScope("# @rbs fn: ^(Integer) -> String", "->", "punctuation.section.signature.return.rbs");
+    assertScope(
+      "# @rbs fn: ^(Integer) -> String",
+      "->",
+      "punctuation.section.signature.return.rbs",
+    );
   });
 
   it("scopes a proc caret", () => {
@@ -215,7 +242,11 @@ describe("@rbs types", () => {
   });
 
   it("scopes a record key", () => {
-    assertScope("# @rbs opts: { url: String }", "url", "constant.other.symbol.hashkey.parameter.function.rbs");
+    assertScope(
+      "# @rbs opts: { url: String }",
+      "url",
+      "constant.other.symbol.hashkey.parameter.function.rbs",
+    );
   });
 });
 
