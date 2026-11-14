@@ -7,3 +7,5 @@ pnpm-lock.yaml
 release-please-config.json
 .release-please-manifest.json
 renovate.json
+.oxlintrc.json
+.oxfmtrc.json
