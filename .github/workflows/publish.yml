@@ -24,11 +24,11 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
 
-  # The Marketplace trusts this workflow via OIDC trusted publishing, pinned
-  # to this file name and the `release` environment; change either and
-  # publishing stops. Tests run in ci.yml, so this job only packages and
-  # publishes. The extension has no runtime dependencies, so it skips
-  # `pnpm install` and packages with --no-dependencies.
+  # The Marketplace and Open VSX trust this workflow via OIDC trusted
+  # publishing, pinned to this file name and the `release` environment;
+  # change either and publishing stops. Tests run in ci.yml, so this job only
+  # packages and publishes. The extension has no runtime dependencies, so it
+  # skips `pnpm install` and packages with --no-dependencies.
   publish:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
@@ -54,3 +54,5 @@ jobs:
         run: gh release upload "$TAG" rbs-inline-syntax-*.vsix --repo "$GITHUB_REPOSITORY"
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Publish to Open VSX
+        run: pnpm dlx ovsx@1 publish --trusted-publishing --packagePath rbs-inline-syntax-*.vsix
