@@ -24,7 +24,7 @@ Everything runs through its `bin/` script, never a tool directly (`rake`, `ruboc
 
 ## Releasing
 
-release-please opens a release PR from the Conventional Commit PR titles on `main`; merging it tags the release. `.github/workflows/publish.yml` then packages the `.vsix` with the locked `vsce` in an unprivileged job, publishes that file to the VS Code Marketplace and Open VSX from the `release` environment (OIDC trusted publishing, no stored tokens), and attaches it to the GitHub release. The trusted publishers are tied to the file name `publish.yml` and the `release` environment, so never rename either. Never edit the version or `CHANGELOG.md` by hand (`oxfmt` ignores it).
+release-please opens a release PR from the Conventional Commit PR titles on `main`; merging it tags the release. `.github/workflows/release.yml` then packages the `.vsix` with the locked `vsce` in an unprivileged job, publishes that file to the VS Code Marketplace and Open VSX from the `release` environment (OIDC trusted publishing, no stored tokens), and attaches it to the GitHub release. The trusted publishers are tied to the file name `release.yml` and the `release` environment, so never rename either. Never edit the version or `CHANGELOG.md` by hand (`oxfmt` ignores it).
 
 ## Differences from blueprint
 
@@ -33,8 +33,7 @@ Deliberate, because the extension ships a JSON grammar and no code:
 - **Tests live in `test/`**, not beside the source: the source is `syntaxes/rbs-inline.injection.json`, which has no module for a test to sit beside.
 - **Coverage thresholds have nothing to measure.** `vitest.config.js` keeps blueprint's per-file thresholds for JavaScript outside `test/`, and there is none, so they pass vacuously until some is added.
 - **Plain JavaScript, no TypeScript**, so no `tsconfig.json` and no `bin/typecheck`.
-- **No `bin/build`.** The shared script builds Vite bundles only; the `.vsix` is packaged by `pnpm exec vsce package` in `publish.yml`'s `package` job.
-- **The release workflow is `publish.yml`**, not `release.yml`, because the Marketplace and Open VSX trusted publishers are tied to that name.
+- **No `bin/build`.** The shared script builds Vite bundles only; the `.vsix` is packaged by `pnpm exec vsce package` in `release.yml`'s `package` job.
 - **`renovate.json` adds a custom manager** for the Ruby LSP pin in `test/ruby-lsp.js`, which no shared manager reads.
 - **`pnpm-workspace.yaml` denies `@vscode/vsce-sign`'s install script** (`allowBuilds`): it only installs the signing binary for `vsce --signTool`, which isn't used.
 
