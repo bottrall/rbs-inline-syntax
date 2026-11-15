@@ -1,4 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>bottrall/deps"]
+  "extends": ["github>bottrall/deps"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The Ruby LSP release whose grammars the tests run against, in test/ruby-lsp.js",
+      "managerFilePatterns": ["/^test/ruby-lsp\\.js$/"],
+      "matchStrings": ["const rubyLspVersion = \"(?<currentValue>[^\"]+)\";"],
+      "depNameTemplate": "Shopify/ruby-lsp",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^vscode-ruby-lsp-v(?<version>.+)$"
+    }
+  ]
 }
