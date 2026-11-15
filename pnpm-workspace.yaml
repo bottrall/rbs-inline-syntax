@@ -1,2 +1,4 @@
+allowBuilds:
+  "@vscode/vsce-sign": false
 minimumReleaseAgeExclude:
   - "@bottrall/oxlint-config@0.1.0"
