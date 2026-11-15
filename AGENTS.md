@@ -11,7 +11,6 @@ Everything runs through its `bin/` script, never a tool directly (`rake`, `ruboc
 | `bin/setup`                | Install dependencies on a fresh checkout                                        |
 | `bin/test [paths]`         | Run the tests; pass files to run only those                                     |
 | `bin/lint [--fix] [paths]` | Check lint and formatting; `--fix` fixes what it can                            |
-| `bin/typecheck`            | Type-check the code                                                             |
 | `bin/check`                | `bin/lint --fix`, `bin/typecheck`, `bin/test`: run before calling a change done |
 | `bin/ci`                   | Run exactly what CI runs, without fixes: run before pushing                     |
 
