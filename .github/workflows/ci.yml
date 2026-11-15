@@ -1,7 +1,6 @@
 name: ci
 
-on:
-  - pull_request
+on: pull_request
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,35 +11,24 @@ permissions:
 
 jobs:
   check:
-    name: ${{ matrix.check.name }}
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        check:
+        include:
           - name: lint
             run: bin/lint
           - name: test
             run: bin/test
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
-      - run: bin/setup --frozen-lockfile
-      # The grammar tests run against Ruby LSP's Ruby grammar, which locally
-      # comes from the installed extension. CI has no VS Code, so fetch the
-      # latest Ruby LSP from Open VSX and point the tests at its grammars.
-      - name: Fetch Ruby LSP grammars
-        if: matrix.check.name == 'test'
-        run: |
-          dir="$RUNNER_TEMP/ruby-lsp"
-          url="$(curl -fsSL https://open-vsx.org/api/Shopify/ruby-lsp/latest | jq -r '.files.download')"
-          curl -fsSL -o "$dir.vsix" "$url"
-          unzip -q -j "$dir.vsix" 'extension/grammars/*' -d "$dir"
-          echo "RUBY_LSP_GRAMMARS=$dir" >> "$GITHUB_ENV"
-      - run: ${{ matrix.check.run }}
+      - run: bin/setup
+      - run: ${{ matrix.run }}

@@ -1,43 +1,22 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, inject, it } from "vitest";
 import oniguruma from "vscode-oniguruma";
 import textmate from "vscode-textmate";
 
 const require = createRequire(import.meta.url);
-
-/**
- * The installed Ruby LSP extension's grammars, so the tests exercise the same
- * base grammar (and its `#:` injection) VS Code will use.
- */
-function installedRubyLspDir() {
-  const root = join(homedir(), ".vscode", "extensions");
-  const latest = readdirSync(root)
-    .filter((name) => name.startsWith("shopify.ruby-lsp-"))
-    .toSorted((left, right) => left.localeCompare(right, undefined, { numeric: true }))
-    .at(-1);
-  if (!latest) {
-    throw new Error("Shopify.ruby-lsp is not installed");
-  }
-  return join(root, latest, "grammars");
-}
-
-/** RUBY_LSP_GRAMMARS points at a grammars directory instead, for CI. */
-function rubyLspDir() {
-  return process.env.RUBY_LSP_GRAMMARS || installedRubyLspDir();
-}
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
 function grammarFiles() {
+  const rubyLspDir = inject("rubyLspGrammars");
   return {
-    "source.ruby": join(rubyLspDir(), "ruby.cson.json"),
-    "rbs-comment.injection": join(rubyLspDir(), "rbs.injection.json"),
+    "source.ruby": join(rubyLspDir, "ruby.cson.json"),
+    "rbs-comment.injection": join(rubyLspDir, "rbs.injection.json"),
     "rbs-inline.injection": new URL("../syntaxes/rbs-inline.injection.json", import.meta.url),
   };
 }
