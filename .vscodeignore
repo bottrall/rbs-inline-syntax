@@ -15,3 +15,6 @@ bin/**
 vitest.config.js
 AGENTS.md
 coverage/**
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SECURITY.md
